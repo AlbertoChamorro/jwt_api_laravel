@@ -26,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+        $this->app->register(\Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class);
     }
 }
