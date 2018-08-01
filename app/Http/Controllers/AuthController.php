@@ -7,6 +7,12 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use App\User;
 
+/**
+ * @resource Account
+ *
+ * This endpoints allow operations on accounts
+ */
+
 class AuthController extends Controller
 {
     /**
@@ -20,6 +26,9 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
+    /**
+     * Register User
+     */
     public function register(RegisterFormRequest $request)
     {
         $user = new User;
@@ -34,10 +43,9 @@ class AuthController extends Controller
     }
 
 
-       /**
+    /**
+     * Login
      * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
@@ -81,6 +89,7 @@ class AuthController extends Controller
     }
 
     /**
+     * Profile User
      * Get the authenticated User.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -95,10 +104,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     * Log out
+     * LogOut
      * Invalidate the token, so user cannot use it anymore
      * They have to relogin to get a new token
      *
@@ -125,9 +131,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Renew Token.
      */
     public function renewToken()
     {

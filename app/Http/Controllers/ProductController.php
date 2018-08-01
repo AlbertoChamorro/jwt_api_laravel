@@ -5,10 +5,20 @@ namespace App\Http\Controllers;
 use App\Product;
 use Illuminate\Http\Request;
 
+/**
+ * @resource Product
+ *
+ * This endpoints allow operations on products
+ */
+
 class ProductController extends Controller
 {
+    // php artisan api:gen --routePrefix="api/*" --noResponseCalls
+
     /**
-     * Display a listing of the resource.
+     * GET: List
+     *
+     * @param  int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -31,9 +41,10 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * GET: Detail
      *
-     * @param  \App\Product  $product
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show(int $id)
@@ -46,11 +57,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * PUT: Update
      */
     public function update(Request $request, Product $product)
     {
@@ -58,10 +65,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * DELETE: Remove
      */
     public function destroy(int $id)
     {
