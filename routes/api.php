@@ -23,10 +23,11 @@ Route::post('signup', 'AuthController@register');
 
 Route::post('login', 'AuthController@login');
 
-Route::group(['prefix' => 'auth', 'middleware' => 'jwt.auth'], function () {
+// auth:api | jwt.auth
+Route::group(['prefix' => 'auth', 'middleware' => 'auth.jwt'], function () {
     Route::get('userProfile', 'AuthController@userProfile');
     Route::post('logout', 'AuthController@logout');
 });
 
-Route::middleware('jwt.refresh')->get('/token/renew', 'AuthController@renewToken');
+Route::middleware('jwt.refresh')->post('/token/renew', 'AuthController@renewToken');
 

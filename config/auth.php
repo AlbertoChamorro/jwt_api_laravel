@@ -42,7 +42,7 @@ return [
         ],
 
         'api' => [
-            'driver' => 'awt',
+            'driver' => 'jwt', // token
             'provider' => 'users',
         ],
     ],

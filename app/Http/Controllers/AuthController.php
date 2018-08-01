@@ -9,6 +9,16 @@ use App\User;
 
 class AuthController extends Controller
 {
+    /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // middleware - [ api | auth:api ]
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+    }
 
     public function register(RegisterFormRequest $request)
     {
@@ -22,36 +32,72 @@ class AuthController extends Controller
             'data' => $user
         ], 200);
     }
+
+
+       /**
+     * Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
-        if (!$token = JWTAuth::attempt($credentials)) {
-            return response([
-                'status_code' => 2000,
-                'error' => 'credenciales inválidas'
-            ], 200);
-        }
-        return response([
-            'accessToken' => $token
-        ]);
-    }
-    public function userProfile(Request $request)
-    {
-        // $user = User::find(Auth::user()->id);
+        // $credentials = $request->only('email', 'password');
+        // if (!$token = JWTAuth::attempt($credentials)) {
+        //     return response([
+        //         'status_code' => 2000,
+        //         'error' => 'credenciales inválidas'
+        //     ], 200);
+        // }
         // return response([
-        //     'data' => $user
+        //     'accessToken' => $token
         // ]);
 
-        // $this->validate($request, [
-        //     'token' => 'required'
-        // ]);
- 
+        $credentials = $request->only('email', 'password');
+
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json([
+                'error' => 'Credenciales inválidas',
+                'status_code' => 4001
+            ], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+  /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'accessToken' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function userProfile(Request $request)
+    {
+        // auth()->user()
         $token = $request->header('Authorization');
         $user = JWTAuth::authenticate($token);
  
         return response()->json(['data' => $user]);
     }
+
     /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
      * Log out
      * Invalidate the token, so user cannot use it anymore
      * They have to relogin to get a new token
@@ -60,25 +106,31 @@ class AuthController extends Controller
      */
     public function logout(Request $request) {
 
-        $token = $request->header('Authorization');
+        // $token = $request->header('Authorization');
 
-        try {
-            JWTAuth::invalidate($token);
-            return response([
-                'data' => true
-            ]);
-        } catch (JWTException $e) {
-            // something went wrong whilst attempting to encode the token
-            return response([
-                'error' => 'Ha ocurrido un error.'
-            ], 200);
-        }
+        // try {
+        //     JWTAuth::invalidate($token);
+        //     return response([
+        //         'data' => true
+        //     ]);
+        // } catch (JWTException $e) {
+        //     // something went wrong whilst attempting to encode the token
+        //     return response([
+        //         'error' => 'Ha ocurrido un error.'
+        //     ], 200);
+        // }
+        auth()->logout();
+
+        return response()->json([ 'data' => true ]);
     }
 
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function renewToken()
     {
-        return response([
-            'data' => true
-        ]);
+       return $this->respondWithToken(auth()->refresh());
     }
 }
